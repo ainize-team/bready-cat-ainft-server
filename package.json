@@ -4,6 +4,7 @@
     "description": "",
     "main": "app.js",
     "scripts": {
+        "start": "node src/app.js",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "repository": {
@@ -15,5 +16,8 @@
     "bugs": {
         "url": "https://github.com/ainize-team/bready-cat-trigger/issues"
     },
-    "homepage": "https://github.com/ainize-team/bready-cat-trigger#readme"
+    "homepage": "https://github.com/ainize-team/bready-cat-trigger#readme",
+    "dependencies": {
+        "express": "^4.18.2"
+    }
 }
