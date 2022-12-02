@@ -32,7 +32,6 @@ const createTask = async (prompt) => {
     defaultDto.params.seed = getRandomInt(SEED_RANGE);
 
     const res = await axios.post(`${process.env.TTA_HOST}/generate`, defaultDto);
-    console.log(res.data);
     return res.data;
 };
 
