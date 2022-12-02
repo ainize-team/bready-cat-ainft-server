@@ -6,7 +6,7 @@ const APP_NAME = isProd ? "bready_cat" : "bready_cat";
 
 const NETWORK_NAME = isProd ? "mainnet" : "testnet";
 
-const PORT = 3000;
+const PORT = 80;
 
 // Discord mock ID to bypass Discord and call directly
 const DISCORD_MOCK_ID = "bready-cat-ainft";
