@@ -1,5 +1,7 @@
 const isProd = 0;
 
+const SEED_RANGE = 4_294_967_295;
+
 const APP_NAME = isProd ? "bready_cat" : "bready_cat";
 
 const NETWORK_NAME = isProd ? "mainnet" : "testnet";
@@ -21,4 +23,5 @@ module.exports = {
     DISCORD_MOCK_ID,
     BUCKET_NAME,
     STORAGE_BASE_URL,
+    SEED_RANGE,
 };

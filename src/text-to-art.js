@@ -1,6 +1,6 @@
 const axios = require("axios");
 const dotenv = require("dotenv");
-const { DISCORD_MOCK_ID } = require("./const");
+const { DISCORD_MOCK_ID, SEED_RANGE } = require("./const");
 
 dotenv.config();
 
@@ -13,20 +13,24 @@ const defaultDto = {
     },
     params: {
         prompt: "write your prompt",
-        steps: 50,
+        steps: 30,
         // random seed
-        seed: 50,
+        seed: 1,
         width: 768,
         height: 768,
-        images: 2,
+        images: 1,
         guidance_scale: 7.5,
         model_id: "stable-diffusion-v2",
     },
 };
-
+const getRandomInt = (max) => {
+    return Math.floor(Math.random() * max);
+};
 const createTask = async (prompt) => {
     // FIXME(haechan@comcom.ai): this expression just overwrite previous dto
-    defaultDto.prompt = prompt;
+    defaultDto.params.prompt = prompt;
+    defaultDto.params.seed = getRandomInt(SEED_RANGE);
+
     const res = await axios.post(`${process.env.TTA_HOST}/generate`, defaultDto);
     console.log(res.data);
     return res.data;
