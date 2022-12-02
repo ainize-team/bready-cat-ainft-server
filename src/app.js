@@ -1,12 +1,15 @@
 const express = require("express");
-const app = express();
-const port = 3000;
+const { writeWeatherImageUrlToAin } = require("./controller");
+const { PORT } = require("./const");
 
-app.get("/onWriteWeatherTrigger", (req, res) => {
-    console.log(JSON.stringify(req));
-    res.send("Hello World!");
+const app = express();
+
+app.get("/", (req, res) => {
+    res.send("bready-cat-trigger is running");
 });
 
-app.listen(port, () => {
-    console.log(`Example app listening on port ${port}`);
+app.post("/onWriteWeatherTrigger", writeWeatherImageUrlToAin);
+
+app.listen(PORT, () => {
+    console.log(`bready-cat-trigger app listening on port ${PORT}`);
 });
