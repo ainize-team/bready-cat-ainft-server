@@ -7,6 +7,8 @@ const { STORAGE_BASE_URL, BUCKET_NAME, APP_NAME } = require("./const");
 const writeWeatherImageUrlToAin = async (req, res) => {
     res.send("Triggered!");
     console.log(req.body);
+
+    // text-to-image
     const prompt =
         "Sunny weather landscape with half hill and half sky , solid color, simple cartoon style";
     const { task_id: taskId } = await createTask(prompt);
@@ -15,14 +17,16 @@ const writeWeatherImageUrlToAin = async (req, res) => {
     const { result } = await getCompletedTask(taskId);
     console.log("result :>> ", result);
 
+    // upload image to storage
     const imageUrl = result[1].url;
     const { data: image } = await axios.get(imageUrl, { responseType: "arraybuffer" });
     const destFileName = `date/weather/${generateRandomString(5)}.png`;
     await uploadFromMemory(destFileName, image);
     console.log(`Storage: upload ${imageUrl} to ${destFileName}`);
 
+    // write image url to ain
     const storageImageUrl = `${STORAGE_BASE_URL}/${BUCKET_NAME}/${destFileName}`;
-    const path = "12-1-2022/image";
+    const path = "12-01-2022/image";
     await setValue(APP_NAME, path, { value: storageImageUrl });
     console.log(`Ain: set url(${storageImageUrl}) at ${path}`);
 };
