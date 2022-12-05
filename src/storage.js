@@ -1,7 +1,10 @@
+const dotenv = require("dotenv");
 const { initializeApp, cert } = require("firebase-admin/app");
 const { getStorage } = require("firebase-admin/storage");
 const { BUCKET_NAME } = require("./const");
-const serviceAccount = require("../resource/serviceAccountKey.json");
+
+dotenv.config();
+const serviceAccount = JSON.parse(process.env.SERVICE_ACCOUNT_KEY);
 
 initializeApp({
     credential: cert(serviceAccount),
