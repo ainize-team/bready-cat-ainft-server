@@ -6,9 +6,11 @@ const { BUCKET_NAME } = require("./const");
 dotenv.config();
 let serviceAccount;
 try {
-    serviceAccount = JSON.parse(process.env.SERVICE_ACCOUNT_KEY);
+    serviceAccount = JSON.parse(
+        Buffer.from(process.env.SERVICE_ACCOUNT_KEY_BASE64, "base64").toString("utf8")
+    );
 } catch (error) {
-    console.error("SERVICE_ACCOUNT_KEY", process.env.SERVICE_ACCOUNT_KEY);
+    console.error("SERVICE_ACCOUNT_KEY_BASE64:", process.env.SERVICE_ACCOUNT_KEY_BASE64);
     console.error(error);
 }
 
