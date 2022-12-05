@@ -4,7 +4,13 @@ const { getStorage } = require("firebase-admin/storage");
 const { BUCKET_NAME } = require("./const");
 
 dotenv.config();
-const serviceAccount = JSON.parse(process.env.SERVICE_ACCOUNT_KEY);
+let serviceAccount;
+try {
+    serviceAccount = JSON.parse(process.env.SERVICE_ACCOUNT_KEY);
+} catch (error) {
+    console.error("SERVICE_ACCOUNT_KEY", process.env.SERVICE_ACCOUNT_KEY);
+    console.error(error);
+}
 
 initializeApp({
     credential: cert(serviceAccount),
