@@ -6,20 +6,18 @@ const { generateRandomString, parsePath, formatPath } = require("./util");
 const { STORAGE_BASE_URL, BUCKET_NAME, APP_NAME } = require("./const");
 
 const writeWeatherImageUrlToAin = async (req, res) => {
-    console.log("req :>> ", req);
-    // console.log("req.body :>> ", req.body);
-    // console.log("req.body.transaction :>> ", req.body.transaction);
-    // const tx = req.body.transaction;
-    // validateTransaction(tx);
+    res.send("Triggered!");
 
-    // console.log("tx.tx_body_operation :>> ", tx.tx_body_operation);
-    // const { ref, value: weather } = tx.tx_body.operation;
-    // // app/appname/...
-    // const parsedRef = parsePath(ref);
+    const tx = req.body.transaction;
+    validateTransaction(tx);
+
+    const { ref, value: weather } = tx.tx_body.operation;
+    // ref: app/bready_cat/$date/weather
+    const parsedRef = parsePath(ref);
+    const date = parsePath[2];
 
     // text-to-image
-    // const prompt = `${weather} weather landscape with half hill and half sky , solid color, simple cartoon style`;
-    const prompt = `Sunny weather landscape with half hill and half sky , solid color, simple cartoon style`;
+    const prompt = `${weather} weather landscape with half hill and half sky , solid color, simple cartoon style`;
     const { task_id: taskId } = await createTask(prompt);
     console.log("taskId :>> ", taskId);
 
@@ -29,14 +27,13 @@ const writeWeatherImageUrlToAin = async (req, res) => {
     // upload image to storage
     const imageUrl = result[1].url;
     const { data: image } = await axios.get(imageUrl, { responseType: "arraybuffer" });
-    const destFileName = `date/weather/${generateRandomString(5)}.png`;
+    const destFileName = `${date}/weather/background_${generateRandomString(5)}.png`;
     await uploadFromMemory(destFileName, image);
     console.log(`Storage: upload ${imageUrl} to ${destFileName}`);
 
     // write image url to ain
     const storageImageUrl = `${STORAGE_BASE_URL}/${BUCKET_NAME}/${destFileName}`;
-    // const backgroundPath = formatPath([...parsedRef.slice(2, parsedRef.length - 1), "background"]);
-    const backgroundPath = "asdfew/background";
+    const backgroundPath = formatPath([...parsedRef.slice(2, parsedRef.length - 1), "background"]);
     await setValue(APP_NAME, backgroundPath, { value: storageImageUrl });
     console.log(`Ain: set url(${storageImageUrl}) at ${backgroundPath}`);
 };

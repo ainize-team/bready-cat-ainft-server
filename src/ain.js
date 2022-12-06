@@ -5,7 +5,7 @@ const { isProd, NETWORK_NAME } = require("./const");
 dotenv.config();
 const provideUrl = `https://${NETWORK_NAME}-api.ainetwork.ai`;
 const ain = new Ain(provideUrl, isProd ? 1 : 0);
-const myAddress = ain.wallet.addAndSetDefaultAccount(`${process.env.PRIVATE_KEY}`);
+ain.wallet.addAndSetDefaultAccount(`${process.env.PRIVATE_KEY}`);
 
 const setFunction = async (appName, path, _function) => {
     const appPath = `/apps/${appName}`;
