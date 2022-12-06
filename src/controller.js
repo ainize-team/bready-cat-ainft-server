@@ -6,7 +6,7 @@ const { STORAGE_BASE_URL, BUCKET_NAME, APP_NAME } = require("./const");
 
 const writeWeatherImageUrlToAin = async (req, res) => {
     res.send("Triggered!");
-    console.log(req.body);
+    console.log("req :>> ", req);
 
     // text-to-image
     const prompt =
