@@ -1,31 +1,16 @@
 const Ain = require("@ainblockchain/ain-js").default;
-const dotenv = require("dotenv");
-const { isProd, NETWORK_NAME } = require("./const");
+const { isProd } = require("./const");
+// @see https://docs.ainetwork.ai/ain-blockchain/developer-guide/tools/ainize-trigger/project-deployer
 
-dotenv.config();
-const provideUrl = `https://${NETWORK_NAME}-api.ainetwork.ai`;
-const ain = new Ain(provideUrl, isProd ? 1 : 0);
-ain.wallet.addAndSetDefaultAccount(`${process.env.PRIVATE_KEY}`);
+// Ainize set env ainetwork provider url as "PROVIDER_URL"
+const blockchainEndpoint = process.env.PROVIDER_URL;
+const chainId = isProd ? 1 : 0;
+const ain = new Ain(blockchainEndpoint, chainId);
 
-const setFunction = async (appName, path, _function) => {
-    const appPath = `/apps/${appName}`;
-    // Set a function to be triggered when writing values at the functionPath.
-    const functionPath = `${appPath}/${path}`;
-    return ain.db.ref(functionPath).setFunction(_function);
-};
-
-const setValue = async (appName, path, value) => {
-    const setPath = `/apps/${appName}/${path}`;
-    return ain.db.ref(setPath).setValue(value);
-};
-
-const getValue = async (appName, path) => {
-    const getPath = `/apps/${appName}/${path}`;
-    return ain.db.ref(getPath).getValue();
-};
+// Ainize set env ainetwork app private key as "AINIZE_INTERNAL_PRIVATE_KEY"
+const privateKey = `${process.env.AINIZE_INTERNAL_PRIVATE_KEY}`;
+ain.wallet.addAndSetDefaultAccount(privateKey);
 
 module.exports = {
-    setFunction,
-    setValue,
-    getValue,
+    ain,
 };

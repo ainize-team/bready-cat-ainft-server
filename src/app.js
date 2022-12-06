@@ -1,7 +1,8 @@
+require("dotenv").config();
 const express = require("express");
 const { writeWeatherImageUrlToAin } = require("./controller");
-const { PORT } = require("./const");
 const app = express();
+const PORT = process.env.PORT;
 
 app.use(express.json());
 

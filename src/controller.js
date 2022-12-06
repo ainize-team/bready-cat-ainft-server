@@ -1,9 +1,9 @@
 const axios = require("axios");
 const { createTask, getCompletedTask } = require("./text-to-art");
 const { uploadFromMemory } = require("./storage");
-const { setValue } = require("./ain");
+const { ain } = require("./ain");
 const { generateRandomString, parsePath, formatPath } = require("./util");
-const { STORAGE_BASE_URL, BUCKET_NAME, APP_NAME } = require("./const");
+const { STORAGE_BASE_URL, BUCKET_NAME } = require("./const");
 
 const writeWeatherImageUrlToAin = async (req, res) => {
     res.send("Triggered!");
@@ -14,7 +14,7 @@ const writeWeatherImageUrlToAin = async (req, res) => {
     const { ref, value: weather } = tx.tx_body.operation;
     // ref: app/bready_cat/$date/weather
     const parsedRef = parsePath(ref);
-    const date = parsePath[2];
+    const date = parsedRef[2];
 
     // text-to-image
     const prompt = `${weather} weather landscape with half hill and half sky , solid color, simple cartoon style`;
@@ -33,8 +33,8 @@ const writeWeatherImageUrlToAin = async (req, res) => {
 
     // write image url to ain
     const storageImageUrl = `${STORAGE_BASE_URL}/${BUCKET_NAME}/${destFileName}`;
-    const backgroundPath = formatPath([...parsedRef.slice(2, parsedRef.length - 1), "background"]);
-    await setValue(APP_NAME, backgroundPath, { value: storageImageUrl });
+    const backgroundPath = formatPath([...parsedRef.slice(0, parsedRef.length - 1), "background"]);
+    await ain.db.ref(backgroundPath).setValue({ value: storageImageUrl });
     console.log(`Ain: set url(${storageImageUrl}) at ${backgroundPath}`);
 };
 

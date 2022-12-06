@@ -1,8 +1,6 @@
 const axios = require("axios");
-const dotenv = require("dotenv");
 const { DISCORD_MOCK_ID, SEED_RANGE } = require("./const");
-
-dotenv.config();
+const { getRandomInt } = require("./util");
 
 const defaultDto = {
     discord: {
@@ -23,9 +21,7 @@ const defaultDto = {
         model_id: "stable-diffusion-v2",
     },
 };
-const getRandomInt = (max) => {
-    return Math.floor(Math.random() * max);
-};
+
 const createTask = async (prompt) => {
     // FIXME(haechan@comcom.ai): this expression just overwrite previous dto
     defaultDto.params.prompt = prompt;

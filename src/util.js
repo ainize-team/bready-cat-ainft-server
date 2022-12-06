@@ -1,4 +1,7 @@
-// for test
+const getRandomInt = (max) => {
+    return Math.floor(Math.random() * max);
+};
+
 const generateRandomString = (num) => {
     const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
     let result = "";
@@ -32,6 +35,7 @@ const formatPath = (parsedPath) => {
 };
 
 module.exports = {
+    getRandomInt,
     generateRandomString,
     parsePath,
     formatPath,
