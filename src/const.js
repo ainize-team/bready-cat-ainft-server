@@ -9,9 +9,13 @@ const BUCKET_NAME = isProd ? "bready-cat" : "bready-cat-dev";
 
 const STORAGE_BASE_URL = "https://storage.cloud.google.com";
 
+// NOTE(HAECHAN): GAS_PRICE for Prod will change;
+const GAS_PRICE = isProd ? 0.0005 * 1e6 : 0.0005 * 1e6; // we will use 0.0005ain (1 ain == 1e6)
+
 module.exports = {
     DISCORD_MOCK_ID,
     BUCKET_NAME,
     STORAGE_BASE_URL,
     SEED_RANGE,
+    GAS_PRICE,
 };

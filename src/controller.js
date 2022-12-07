@@ -3,7 +3,7 @@ const { createTask, getCompletedTask } = require("./text-to-art");
 const { uploadFromMemory } = require("./storage");
 const { ain } = require("./ain");
 const { generateRandomString, parsePath, formatPath } = require("./util");
-const { STORAGE_BASE_URL, BUCKET_NAME } = require("./const");
+const { STORAGE_BASE_URL, BUCKET_NAME, GAS_PRICE } = require("./const");
 
 const writeWeatherImageUrlToAin = async (req, res) => {
     res.send("Triggered!");
@@ -34,8 +34,16 @@ const writeWeatherImageUrlToAin = async (req, res) => {
     // write image url to ain
     const storageImageUrl = `${STORAGE_BASE_URL}/${BUCKET_NAME}/${destFileName}`;
     const backgroundPath = formatPath([...parsedRef.slice(0, parsedRef.length - 1), "background"]);
-    await ain.db.ref(backgroundPath).setValue({ value: storageImageUrl });
-    console.log(`Ain: set url(${storageImageUrl}) at ${backgroundPath}`);
+    ain.db
+        .ref(backgroundPath)
+        .setValue({ value: storageImageUrl, nonce: -1, gas_price: GAS_PRICE })
+        .then((res) => {
+            if (res["result"]["message"] !== undefined) {
+                console.error(res);
+            } else {
+                console.log(res);
+            }
+        });
 };
 
 const validateTransaction = (tx) => {
