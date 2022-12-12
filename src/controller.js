@@ -1,7 +1,7 @@
 const axios = require("axios");
 const { createTask, getCompletedTask } = require("./text-to-art");
 const { uploadFromMemory } = require("./storage");
-const { ain } = require("./ain");
+const ain = require("./ain");
 const { generateRandomString, parsePath, formatPath } = require("./util");
 const { STORAGE_BASE_URL, BUCKET_NAME, GAS_PRICE } = require("./const");
 

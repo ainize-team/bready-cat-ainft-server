@@ -7,10 +7,8 @@ const blockchainEndpoint = process.env.PROVIDER_URL;
 const chainId = isProd ? 1 : 0;
 const ain = new Ain(blockchainEndpoint, chainId);
 
-// Ainize set env ainetwork app private key as "AINIZE_INTERNAL_PRIVATE_KEY"
+// Ainize set env ainetwork wallet private key as "AINIZE_INTERNAL_PRIVATE_KEY"
 const privateKey = `${process.env.AINIZE_INTERNAL_PRIVATE_KEY}`;
 ain.wallet.addAndSetDefaultAccount(privateKey);
 
-module.exports = {
-    ain,
-};
+module.exports = ain;
