@@ -1,3 +1,4 @@
+const { STORAGE_BASE_URL, BUCKET_NAME } = require("../const");
 const generateRandomInt = (max) => {
     return Math.floor(Math.random() * max);
 };
@@ -34,9 +35,14 @@ const formatPath = (parsedPath) => {
     return (formatted.startsWith("/") ? "" : "/") + formatted;
 };
 
+const bucketFileUrl = (path) => {
+    return `${STORAGE_BASE_URL}/${BUCKET_NAME}/${path}`;
+};
+
 module.exports = {
     generateRandomInt,
     generateRandomString,
     parsePath,
     formatPath,
+    bucketFileUrl,
 };
