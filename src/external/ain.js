@@ -1,5 +1,5 @@
 const Ain = require("@ainblockchain/ain-js").default;
-const { isProd } = require("./const");
+const { isProd } = require("../const");
 // @see https://docs.ainetwork.ai/ain-blockchain/developer-guide/tools/ainize-trigger/project-deployer
 
 // Ainize set env ainetwork provider url as "PROVIDER_URL"

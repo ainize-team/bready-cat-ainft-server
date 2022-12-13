@@ -1,6 +1,6 @@
 const { initializeApp, cert } = require("firebase-admin/app");
 const { getStorage } = require("firebase-admin/storage");
-const { BUCKET_NAME } = require("./const");
+const { BUCKET_NAME } = require("../const");
 
 let serviceAccount;
 try {
@@ -19,10 +19,4 @@ initializeApp({
 
 const bucket = getStorage().bucket(BUCKET_NAME);
 
-const uploadFromMemory = async (destFileName, contents) => {
-    return bucket.file(destFileName).save(contents);
-};
-
-module.exports = {
-    uploadFromMemory,
-};
+module.exports = bucket;

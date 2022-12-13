@@ -1,6 +1,6 @@
 const axios = require("axios");
-const { DISCORD_MOCK_ID, SEED_RANGE } = require("./const");
-const { getRandomInt } = require("./util");
+const { DISCORD_MOCK_ID, SEED_RANGE } = require("../const");
+const { generateRandomInt } = require("../util/util");
 
 const defaultDto = {
     discord: {
@@ -25,7 +25,7 @@ const defaultDto = {
 const createTask = async (prompt) => {
     // FIXME(haechan@comcom.ai): this expression just overwrite previous dto
     defaultDto.params.prompt = prompt;
-    defaultDto.params.seed = getRandomInt(SEED_RANGE);
+    defaultDto.params.seed = generateRandomInt(SEED_RANGE);
 
     const res = await axios.post(`${process.env.TTA_HOST}/generate`, defaultDto);
     return res.data;
