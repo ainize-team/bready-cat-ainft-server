@@ -1,4 +1,4 @@
-const getRandomInt = (max) => {
+const generateRandomInt = (max) => {
     return Math.floor(Math.random() * max);
 };
 
@@ -35,7 +35,7 @@ const formatPath = (parsedPath) => {
 };
 
 module.exports = {
-    getRandomInt,
+    generateRandomInt,
     generateRandomString,
     parsePath,
     formatPath,
