@@ -1,25 +1,17 @@
 const { validateTokenId } = require("../util/validator");
-
+const { getMetadataByTokenId } = require("../service/contractService");
 const getMetadata = async (req, res) => {
-    const defaultDto = {
-        name: `AINFT #${tokenId}`,
-        description: "This is the best AINFT ever!",
-        image: "https://storage.googleapis.com/nft-server-dev.appspot.com/ainft-test/wow.gif",
-        attributes: [
-            {
-                trait_type: "Example Trait 1",
-                value: "Nice",
-            },
-            {
-                trait_type: "Example Trait 2",
-                value: "Much wow",
-            },
-        ],
-    };
     const tokenId = Number(req.params.tokenId);
-    validateTokenId(tokenId);
+    try {
+        validateTokenId(tokenId);
+    } catch (e) {
+        console.error(e);
+        return res.status(400).send(e.message);
+    }
 
-    return res.status(200).json(defaultDto);
+    const metadata = await getMetadataByTokenId(tokenId);
+
+    return res.status(200).json(metadata);
 };
 
 module.exports = {
