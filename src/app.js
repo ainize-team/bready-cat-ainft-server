@@ -16,7 +16,7 @@ app.get("/", (req, res) => {
 
 app.post("/trigger", onWriteWeatherTrigger);
 
-app.get("/:tokenId", getMetadata);
+app.get("/metadata/:tokenId", getMetadata);
 
 app.listen(PORT, () => {
     console.log(`bready-cat-trigger app listening on port ${PORT}`);
