@@ -1,4 +1,5 @@
 const axios = require("axios");
+const fs = require("fs/promises");
 const bucket = require("../external/bucket");
 const ain = require("../external/ain");
 const { createTask, getCompletedTask } = require("../external/text-to-art");
@@ -6,9 +7,13 @@ const {
     generateRandomString,
     parsePath,
     formatPath,
+    compositeImage,
     bucketFileUrl,
 } = require("../util/util");
-const { GAS_PRICE } = require("../const");
+const { GAS_PRICE, CAT_TYPES } = require("../const");
+const bgFilePath = "./resource/tmp/bg.png";
+const catFilePath = "./resource/tmp/cat.png";
+const compositeFilePath = "./resource/tmp/composite.png";
 
 const writeWeatherImageUrlToAin = async (ref, weather) => {
     // ref: app/bready_cat/$date/weather
@@ -29,8 +34,24 @@ const writeWeatherImageUrlToAin = async (ref, weather) => {
     const storageImageUrl = bucketFileUrl(destFilePath);
     const backgroundPath = formatPath([...parsedRef.slice(0, parsedRef.length - 1), "background"]);
     saveToAin(backgroundPath, storageImageUrl);
+    try {
+        await bucket.file(destFilePath).download({
+            destination: bgFilePath,
+        });
 
-    // TODO: 이미지 합성하고, bucket 날짜 하위에 저장, bucket 고양이 서비스에도 저장, ain에 두 url 다 저장
+        for (const catType of CAT_TYPES) {
+            await bucket.file(`v1/cat/${catType}.png`).download({
+                destination: catFilePath,
+            });
+            compositeImage(bgFilePath, catFilePath, compositeFilePath);
+            const compositeFile = await fs.readFile(compositeFilePath);
+            await bucket.file(`v1/ainft/${catType}.png`).save(compositeFile);
+            console.log(`update v1/ainft/${catType}.png`);
+        }
+        console.log("update all AINFTs");
+    } catch (error) {
+        console.error(error);
+    }
 };
 
 function saveToAin(path, value) {

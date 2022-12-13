@@ -6,7 +6,7 @@ RUN npm install -g npm@latest
 ADD package*.json /app/
 RUN npm install
 
-# > Copy file
+# > ADD file
 ADD ./src /app/src
 
 EXPOSE 3000

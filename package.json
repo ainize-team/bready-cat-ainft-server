@@ -23,7 +23,9 @@
         "cors": "^2.8.5",
         "dotenv": "^16.0.3",
         "express": "^4.18.2",
-        "firebase-admin": "^11.3.0"
+        "firebase-admin": "^11.3.0",
+        "fs": "^0.0.1-security",
+        "images": "^3.2.4"
     },
     "devDependencies": {
         "eslint": "^8.28.0"
