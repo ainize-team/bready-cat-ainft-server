@@ -14,6 +14,7 @@ app.get("/", (req, res) => {
     res.send("bready-cat-trigger is running");
 });
 
+// NOTE(haechan@comcom.ai): When weather information is written on ainetwork, it triggers this API many times.
 app.post("/trigger", onWriteWeatherTrigger);
 
 app.get("/metadata/:tokenId", getMetadata);
