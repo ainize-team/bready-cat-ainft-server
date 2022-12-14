@@ -11,8 +11,7 @@ const {
     bucketFileUrl,
 } = require("../util/util");
 const { GAS_PRICE, CAT_TYPES } = require("../const");
-const bgFilePath = "./resource/tmp/bg.png";
-const catFilePath = "./resource/tmp/cat.png";
+const backgroundFilePath = "./resource/tmp/background.png";
 const compositeFilePath = "./resource/tmp/composite.png";
 
 const writeWeatherImageUrlToAin = async (ref, weather) => {
@@ -36,14 +35,15 @@ const writeWeatherImageUrlToAin = async (ref, weather) => {
     saveToAin(backgroundPath, storageImageUrl);
     try {
         await bucket.file(destFilePath).download({
-            destination: bgFilePath,
+            destination: backgroundFilePath,
         });
 
         for (const catType of CAT_TYPES) {
+            const catFilePath = `./resource/tmp/${catType}.png`;
             await bucket.file(`v1/cat/${catType}.png`).download({
                 destination: catFilePath,
             });
-            compositeImage(bgFilePath, catFilePath, compositeFilePath);
+            await compositeImage(backgroundFilePath, catFilePath, compositeFilePath);
             const compositeFile = await fs.readFile(compositeFilePath);
             await bucket.file(`v1/ainft/${catType}.png`).save(compositeFile);
             console.log(`update v1/ainft/${catType}.png`);

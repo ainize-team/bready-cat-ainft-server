@@ -1,4 +1,4 @@
-const images = require("images");
+const sharp = require("sharp");
 const { STORAGE_BASE_URL, BUCKET_NAME } = require("../const");
 
 const generateRandomInt = (max) => {
@@ -42,13 +42,19 @@ const bucketFileUrl = (path) => {
 };
 
 const compositeImage = (back, front, outputPath) => {
-    images(back) //Load image from file
-        .size(1200) //Geometric scaling the image to (x) pixels width
-        .draw(images(front), 100, 300) //Drawn logo at coordinates (x, y)
-        .save(outputPath, {
-            //Save the image to a file, with the quality of 50
-            quality: 50,
-        });
+    return sharp(back)
+        .resize({
+            width: 1024,
+            height: 1024,
+        })
+        .composite([
+            {
+                input: front,
+                top: 256,
+                left: 0,
+            },
+        ])
+        .toFile(outputPath);
 };
 
 module.exports = {
