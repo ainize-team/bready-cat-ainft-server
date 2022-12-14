@@ -1,16 +1,10 @@
 const { initializeApp, cert } = require("firebase-admin/app");
 const { getStorage } = require("firebase-admin/storage");
-const { BUCKET_NAME } = require("../const");
+const { STORAGE_BASE_URL, BUCKET_NAME } = require("../const");
 
-let serviceAccount;
-try {
-    serviceAccount = JSON.parse(
-        Buffer.from(process.env.GCP_SERVICE_ACCOUNT_KEY_BASE64, "base64").toString("utf8")
-    );
-} catch (error) {
-    console.error("GCP_SERVICE_ACCOUNT_KEY_BASE64:", process.env.GCP_SERVICE_ACCOUNT_KEY_BASE64);
-    console.error(error);
-}
+const serviceAccount = JSON.parse(
+    Buffer.from(process.env.GCP_SERVICE_ACCOUNT_KEY_BASE64, "base64").toString("utf8")
+);
 
 initializeApp({
     credential: cert(serviceAccount),
@@ -19,4 +13,20 @@ initializeApp({
 
 const bucket = getStorage().bucket(BUCKET_NAME);
 
-module.exports = bucket;
+const objectUrl = (path) => {
+    return `${STORAGE_BASE_URL}/${BUCKET_NAME}/${path}`;
+};
+
+const upload = (path, image) => {
+    return bucket.file(path).save(image);
+};
+
+const download = (path, destination) => {
+    return bucket.file(path).download({ destination });
+};
+
+module.exports = {
+    objectUrl,
+    upload,
+    download,
+};

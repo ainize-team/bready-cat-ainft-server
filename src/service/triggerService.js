@@ -3,20 +3,12 @@ const fs = require("fs/promises");
 const bucket = require("../external/bucket");
 const ain = require("../external/ain");
 const { createTask, getCompletedTask } = require("../external/text-to-art");
-const {
-    generateRandomString,
-    parsePath,
-    formatPath,
-    compositeImage,
-    bucketFileUrl,
-} = require("../util/util");
-const { GAS_PRICE, CAT_TYPES } = require("../const");
-const backgroundFilePath = "./resource/tmp/background.png";
-const compositeFilePath = "./resource/tmp/composite.png";
+const { compositeImage, generateRandomString } = require("../util/util");
+const { CAT_TYPES } = require("../const");
 
 const writeWeatherImageUrlToAin = async (ref, weather) => {
     // ref: app/bready_cat/$date/weather
-    const parsedRef = parsePath(ref);
+    const parsedRef = ain.parseRef(ref);
     const date = parsedRef[2];
 
     // text-to-image
@@ -24,49 +16,37 @@ const writeWeatherImageUrlToAin = async (ref, weather) => {
     const prompt = `${weather} weather landscape with half hill and half sky , solid color, simple cartoon style`;
     const imageUrl = await textToImage(prompt);
 
-    const { data: image } = await axios.get(imageUrl, { responseType: "arraybuffer" });
-    const destFilePath = `${date}/weather/background_${generateRandomString(5)}.png`;
-    await bucket.file(destFilePath).save(image);
-    console.log(`Storage: upload ${imageUrl} to ${destFilePath}`);
+    const { data: background } = await axios.get(imageUrl, { responseType: "arraybuffer" });
+
+    // So, use random strings to prevent overwriting
+    const backgroundFilePath = `${date}/weather/background_${generateRandomString(5)}.png`;
+    await bucket.upload(backgroundFilePath, background);
+    console.log(`Storage: upload ${imageUrl} to ${backgroundFilePath}`);
+
+    const backgroundTmpPath = `./resource/tmp/background.png`;
+    await bucket.download(backgroundFilePath, backgroundTmpPath);
+    const compositeTmpPath = "./resource/tmp/composite.png";
+    for (const catType of CAT_TYPES) {
+        const catTmpPath = `./resource/tmp/${catType}.png`;
+        // await bucket.download(`v1/cat/${catType}.png`, catTmpPath);
+        await compositeImage(backgroundTmpPath, catTmpPath, compositeTmpPath);
+        const compositeFile = await fs.readFile(compositeTmpPath);
+        await bucket.upload(`v1/ainft/${catType}.png`, compositeFile);
+        console.log(`update v1/ainft/${catType}.png`);
+    }
+    console.log("update all AINFTs");
+
+    const backgroundRef = ain.formatRef([
+        ...parsedRef.slice(0, parsedRef.length - 1),
+        "background",
+    ]);
 
     // write image url to ain
-    const storageImageUrl = bucketFileUrl(destFilePath);
-    const backgroundPath = formatPath([...parsedRef.slice(0, parsedRef.length - 1), "background"]);
-    saveToAin(backgroundPath, storageImageUrl);
-    try {
-        await bucket.file(destFilePath).download({
-            destination: backgroundFilePath,
-        });
-
-        for (const catType of CAT_TYPES) {
-            const catFilePath = `./resource/tmp/${catType}.png`;
-            await bucket.file(`v1/cat/${catType}.png`).download({
-                destination: catFilePath,
-            });
-            await compositeImage(backgroundFilePath, catFilePath, compositeFilePath);
-            const compositeFile = await fs.readFile(compositeFilePath);
-            await bucket.file(`v1/ainft/${catType}.png`).save(compositeFile);
-            console.log(`update v1/ainft/${catType}.png`);
-        }
-        console.log("update all AINFTs");
-    } catch (error) {
-        console.error(error);
-    }
+    const backgroundImgUrl = bucket.objectUrl(backgroundFilePath);
+    const ainRes = await ain.write(backgroundRef, backgroundImgUrl);
+    console.log(`Ain: set url(${backgroundImgUrl}) at ${backgroundRef}`);
+    console.log(JSON.stringify(ainRes));
 };
-
-function saveToAin(path, value) {
-    ain.db
-        .ref(path)
-        .setValue({ value, nonce: -1, gas_price: GAS_PRICE })
-        .then((res) => {
-            if (res["result"]["message"] !== undefined) {
-                throw new Error(JSON.stringify(res));
-            } else {
-                console.log(`Ain: set url(${value}) at ${path}`);
-                console.log(JSON.stringify(res));
-            }
-        });
-}
 
 async function textToImage(prompt) {
     const { task_id: taskId } = await createTask(prompt);
