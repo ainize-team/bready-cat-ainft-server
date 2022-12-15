@@ -1,12 +1,13 @@
 const { validateTokenId } = require("../util/validator");
 const { getMetadataByTokenId } = require("../service/contractService");
+
 const getMetadata = async (req, res) => {
     const tokenId = Number(req.params.tokenId);
     try {
         validateTokenId(tokenId);
-    } catch (e) {
-        console.error(e);
-        return res.status(400).send(e.message);
+    } catch (error) {
+        console.error(error);
+        return res.status(400).send(error.message);
     }
 
     const metadata = await getMetadataByTokenId(tokenId);

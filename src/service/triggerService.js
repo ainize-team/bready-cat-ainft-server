@@ -6,8 +6,15 @@ const { textToArt } = require("../external/text-to-art");
 const { compositeImage, generateRandomString } = require("../util/util");
 const { CAT_TYPES } = require("../const");
 
+/**
+ * 1. create background image with weather using text-to-art
+ * 2. Composition of background image and cat
+ * 3. update storage for each compositions
+ * 4. write back in ain background image url
+ * @param {string} ref updated ref on ainetwork (app/bready_cat/$date/weather)
+ * @param {*} weather updated value
+ */
 const writeWeatherImageUrlToAin = async (ref, weather) => {
-    // ref: app/bready_cat/$date/weather
     const parsedRef = ain.parseRef(ref);
     const date = parsedRef[2];
     const backgroundFilePath = `${date}/weather/background_${generateRandomString(5)}.png`;
@@ -21,13 +28,13 @@ const writeWeatherImageUrlToAin = async (ref, weather) => {
     };
     console.log("prompt :>> ", prompt);
     const imageUrl = await textToArt(prompt);
-
     const { data: background } = await axios.get(imageUrl, { responseType: "arraybuffer" });
 
     // Use random strings to prevent overwriting
     await bucket.upload(backgroundFilePath, background);
     console.log(`Storage: upload ${imageUrl} to ${backgroundFilePath}`);
 
+    // After compositing the background picture for each cat, save it to the storage
     await bucket.download(backgroundFilePath, backgroundImgPath);
     for (const catType of CAT_TYPES) {
         const catImgPath = `./resource/cat/${catType}.png`;
@@ -41,14 +48,14 @@ const writeWeatherImageUrlToAin = async (ref, weather) => {
     }
     console.log("update all AINFTs");
 
+    // write backgroundImgUrl to ainetwork
     const backgroundRef = ain.formatRef([
         ...parsedRef.slice(0, parsedRef.length - 1),
         "background",
     ]);
-
-    // write image url to ain
     const backgroundImgUrl = bucket.objectUrl(backgroundFilePath);
     const ainRes = await ain.write(backgroundRef, backgroundImgUrl);
+
     console.log(`Ain: set url(${backgroundImgUrl}) at ${backgroundRef}`);
     console.log(JSON.stringify(ainRes));
 };
