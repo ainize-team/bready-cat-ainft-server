@@ -2,32 +2,23 @@ const axios = require("axios");
 const { DISCORD_MOCK_ID, SEED_RANGE } = require("../const");
 const { generateRandomInt } = require("../util/util");
 
-const defaultDto = {
-    discord: {
+class TextToArtDto {
+    discord = {
         user_id: DISCORD_MOCK_ID,
         guild_id: DISCORD_MOCK_ID,
         channel_id: DISCORD_MOCK_ID,
         message_id: DISCORD_MOCK_ID,
-    },
-    params: {
-        prompt: "write your prompt",
-        steps: 30,
-        // random seed
-        seed: 1,
-        width: 768,
-        height: 768,
-        images: 1,
-        guidance_scale: 7.5,
-        model_id: "stable-diffusion-v2",
-    },
-};
+    };
 
-const createTask = async (prompt) => {
-    // FIXME(haechan@comcom.ai): this expression just overwrite previous dto
-    defaultDto.params.prompt = prompt;
-    defaultDto.params.seed = generateRandomInt(SEED_RANGE);
+    constructor(params) {
+        this.params = params;
+    }
+}
 
-    const res = await axios.post(`${process.env.TTA_HOST}/generate`, defaultDto);
+const createTask = async (params) => {
+    const ttaDto = new TextToArtDto(params);
+
+    const res = await axios.post(`${process.env.TTA_HOST}/generate`, ttaDto);
     return res.data;
 };
 
@@ -50,7 +41,29 @@ const getCompletedTask = (taskId) => {
     });
 };
 
+async function textToArt(prompt, seed = generateRandomInt(SEED_RANGE)) {
+    const params = {
+        prompt: prompt.positive,
+        negative_prompt: prompt.negative,
+        steps: 30,
+        seed: seed,
+        width: 768,
+        height: 768,
+        images: 1,
+        guidance_scale: 7.5,
+        model_id: "stable-diffusion-v2",
+    };
+    const { task_id: taskId } = await createTask(params, seed);
+    console.log("taskId :>> ", taskId);
+
+    const { result } = await getCompletedTask(taskId);
+    console.log("result :>> ", JSON.stringify(result));
+
+    return result[1].url;
+}
+
 module.exports = {
     createTask,
     getCompletedTask,
+    textToArt,
 };
