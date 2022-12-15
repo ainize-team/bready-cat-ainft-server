@@ -37,6 +37,7 @@ const write = async (path, value) => {
     if (res["result"]["message"] !== undefined) {
         throw new Error(JSON.stringify(res));
     }
+    return res;
 };
 
 module.exports = {

@@ -17,8 +17,13 @@ const objectUrl = (path) => {
     return `${STORAGE_BASE_URL}/${BUCKET_NAME}/${path}`;
 };
 
-const upload = (path, image) => {
-    return bucket.file(path).save(image);
+const uploadPublic = async (path, image) => {
+    await bucket.file(path).save(image);
+    await bucket.file(path).makePublic();
+};
+
+const upload = async (path, image) => {
+    await bucket.file(path).save(image);
 };
 
 const download = (path, destination) => {
@@ -28,5 +33,6 @@ const download = (path, destination) => {
 module.exports = {
     objectUrl,
     upload,
+    uploadPublic,
     download,
 };

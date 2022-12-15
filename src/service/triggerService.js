@@ -28,10 +28,12 @@ const writeWeatherImageUrlToAin = async (ref, weather) => {
     const compositeTmpPath = "./resource/tmp/composite.png";
     for (const catType of CAT_TYPES) {
         const catTmpPath = `./resource/tmp/${catType}.png`;
+        // NOTE(haechan@comcom.ai): Which is better, storage or local?
         // await bucket.download(`v1/cat/${catType}.png`, catTmpPath);
         await compositeImage(backgroundTmpPath, catTmpPath, compositeTmpPath);
         const compositeFile = await fs.readFile(compositeTmpPath);
-        await bucket.upload(`v1/ainft/${catType}.png`, compositeFile);
+        await bucket.uploadPublic(`v1/ainft/${catType}.png`, compositeFile);
+
         console.log(`update v1/ainft/${catType}.png`);
     }
     console.log("update all AINFTs");
