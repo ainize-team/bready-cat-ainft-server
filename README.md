@@ -1,6 +1,6 @@
-# bready-cat-trigger
+# bready-cat-ainft-server
 
-bready-cat-ainft trigger API server
+bready-cat-ainft API server
 
 ## Required ENVs:
 
