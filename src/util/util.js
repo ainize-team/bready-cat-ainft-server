@@ -1,4 +1,5 @@
 const sharp = require("sharp");
+const crypto = require("crypto");
 
 const generateRandomInt = (max) => {
     return Math.floor(Math.random() * max);
@@ -31,8 +32,32 @@ const compositeImage = (back, front, outputPath) => {
         .toFile(outputPath);
 };
 
+const decipherEncryptedData = (
+  data,
+  key,
+  iv
+) => {
+  const algorithm = 'aes-128-cbc';
+  const decipher = crypto.createDecipheriv(algorithm, key, iv);
+  let decrypted = decipher.update(data, 'base64', 'utf-8');
+  decrypted += decipher.final('utf-8');
+  return decrypted;
+};
+
+// please use this when you want to encrypt something.
+// encrypted = cipherData(JSON.stringify(data), key, iv);
+const cipherData = (data, key, iv) => {
+  const algorithm = 'aes-128-cbc';
+  const cipher = crypto.createCipheriv(algorithm, key, iv);
+  let encrypted = cipher.update(data, 'utf-8', 'base64');
+  encrypted += cipher.final('base64');
+  return encrypted;
+};
+
 module.exports = {
     generateRandomInt,
     generateRandomString,
     compositeImage,
+    decipherEncryptedData,
+    cipherData
 };
