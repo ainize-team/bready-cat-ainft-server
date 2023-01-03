@@ -25,3 +25,8 @@ you must define .env before execute this command.
 ```
 docker run --env-file .env -p 3000:3000 bready-cat-trigger
 ```
+
+
+## notes
+
+old repo? - https://github.com/ainize-team/bready-cat-ainft-server
