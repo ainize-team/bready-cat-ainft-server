@@ -15,7 +15,7 @@ see `.env.example` file
 ### build
 
 ```
-docker build -t bready-cat-trigger .
+docker build -t bready-cat-ainft-server .
 ```
 
 ### run
@@ -23,5 +23,10 @@ docker build -t bready-cat-trigger .
 you must define .env before execute this command.
 
 ```
-docker run --env-file .env -p 3000:3000 bready-cat-trigger
+docker run --env-file .env -p 3000:3000 bready-cat-ainft-server
 ```
+
+
+## notes
+
+old repo? - https://github.com/ainize-team/bready-cat-trigger ? https://github.com/ainize-team/bready-cat-ainft-server
