@@ -9,6 +9,7 @@ const onWriteWeatherTrigger = async (req, res) => {
 
     const { ref, value: weather } = tx.tx_body.operation;
     await writeWeatherImageUrlToAin(ref, weather);
+    console.log("done!");
 };
 
 module.exports = {
