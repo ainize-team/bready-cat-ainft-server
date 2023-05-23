@@ -1,6 +1,8 @@
 const axios = require("axios");
-const { DISCORD_MOCK_ID, SEED_RANGE } = require("../const");
+const { SEED_RANGE } = require("../const");
 const { generateRandomInt } = require("../util/util");
+
+DISCORD_MOCK_ID = process.env.DISCORD_MOCK_ID;
 
 class TextToArtDto {
     discord = {

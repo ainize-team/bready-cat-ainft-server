@@ -1,16 +1,9 @@
 const { initializeApp, cert } = require("firebase-admin/app");
 const { getStorage } = require("firebase-admin/storage");
-const { STORAGE_BASE_URL, BUCKET_NAME, GCP_SERVICE_ACCOUNT_BASE64_ENCRYPTED } = require("../const");
-const { decipherEncryptedData, cipherData } = require("../util/util");
+const { STORAGE_BASE_URL } = require("../const");
 
-const serviceAccount = JSON.parse(
-    Buffer.from(decipherEncryptedData(
-        GCP_SERVICE_ACCOUNT_BASE64_ENCRYPTED,
-        process.env.GCP_SA_PRIVATE_KEY,
-        process.env.GCP_SA_PRIVATE_IV
-    ), "base64").toString("utf8")
-);
-
+const BUCKET_NAME = process.env.BUCKET_NAME;
+const serviceAccount = JSON.parse(`${process.env.GCP_SERVICE_ACCOUNT_KEY}`);
 initializeApp({
     credential: cert(serviceAccount),
     storageBucket: `${BUCKET_NAME}.appspot.com`,
