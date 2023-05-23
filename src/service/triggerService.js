@@ -23,7 +23,9 @@ const writeWeatherImageUrlToAin = async (ref, weather) => {
 
     // text-to-image
     const prompt = {
-        positive: `${process.env.PREFIX_PROMPT ?? ''} ${weather} ${process.env.POSTFIX_PROMPT ?? ''}`,
+        positive: `${process.env.PREFIX_PROMPT ?? ""} ${weather} ${
+            process.env.POSTFIX_PROMPT ?? ""
+        }`,
         negative: process.env.NEGATIVE_PROMPT,
     };
     console.log("prompt :>> ", prompt);
