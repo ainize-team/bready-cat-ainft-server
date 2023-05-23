@@ -4,7 +4,7 @@ const { STORAGE_BASE_URL } = require("../const");
 
 const BUCKET_NAME = process.env.BUCKET_NAME;
 const serviceAccount = require("../../serviceAccountKey");
-console.log(serviceAccount);
+
 initializeApp({
     credential: cert(serviceAccount),
     storageBucket: `${BUCKET_NAME}.appspot.com`,
